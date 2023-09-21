@@ -2,7 +2,11 @@
 
 # Doodle chat app using Java Spring
 
-Real-time chat application using Reactjs, sprintBoot, WebFlux and MongoDB
+Real-time chat application using Reactjs, SpringBoot, Server-Sent Events, and MongoDB
+
+
+https://github.com/loayakram96/doodleJavaSpring/assets/28843246/a3481a78-fb64-4ca8-8bf5-b6984e0238ae
+
 
 ## How to Run
 
