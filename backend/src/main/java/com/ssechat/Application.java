@@ -1,0 +1,50 @@
+package com.ssechat;
+
+import com.ssechat.model.ChatMessage;
+import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.mongodb.core.CollectionOptions;
+import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
+import reactor.core.Disposable;
+
+/**
+ * launch spring boot app and create capped collection for chat message collection
+ */
+@SpringBootApplication
+public class Application {
+
+    Logger logger = LoggerFactory.getLogger(Application.class);
+
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+
+    @Bean
+    ApplicationRunner onStart(ReactiveMongoTemplate template) {
+
+        // create capped collection for chat messages - this is a one time operation
+        return args -> {
+            CollectionOptions options = CollectionOptions.empty()
+                    .capped().size(5000000)
+                    .maxDocuments(10000);
+            try {
+                Disposable result = template.createCollection(ChatMessage.class, options).subscribe();
+                result.dispose();
+            } catch (Exception e) {
+                // i am not a fan of generic catchall - still - i didnt want to loose to much time here
+                logger.info(e.getMessage());
+            }
+        };
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
+
+}
